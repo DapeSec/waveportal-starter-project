@@ -7,12 +7,13 @@ import twitterLogo from './assets/twitter-logo.svg';
   // Constants
   const TWITTER_HANDLE = 'Dape25';
   const TWITTER_LINK = `https://twitter.com/${TWITTER_HANDLE}`;
-  const contractAddress = "0xd5f08a0ae197482FA808cE84E00E97d940dBD26E";
+  const contractAddress = "0x99D90ecD32fb32c361CfE43769356e4dA3633B05";
   const contractABI = abi.abi;
 
   const App = () => {
     // States
     const [currentAccount, setCurrentAccount] = useState("");
+    const [inputValue, setInputValue] = useState('');
 
     // Actions
     const checkIfWalletIsConnected = async () => {    
@@ -70,7 +71,7 @@ import twitterLogo from './assets/twitter-logo.svg';
           let count = await linkedinPortalContract.getTotalProfiles();
           console.log("Retrieved total LinkedIn Profiles...", count.toNumber());
 
-          const profileTxn = await linkedinPortalContract.wave();
+          const profileTxn = await linkedinPortalContract.postProfile();
           console.log("Mining...", profileTxn.hash);
 
           await profileTxn.wait();
@@ -86,6 +87,11 @@ import twitterLogo from './assets/twitter-logo.svg';
       }
     }
 
+    const onInputChange = (event) => {
+      const { value } = event.target;
+      setInputValue(value);
+    };
+
     const renderNotConnectedContainer = () => (
       <button
         className="walletButton"
@@ -96,15 +102,33 @@ import twitterLogo from './assets/twitter-logo.svg';
     );
 
     const renderConnectedContainer = () => (
-      <div className="summary">
-          Add a link to your LinkedIn Profile to be displayed as a Web 3.0 dev!
-          
-        <button
-          className="profileButton"
-          onClick={postProfile}
+      <div className="connected-container">
+        <div className="summary">
+          Add a link to your LinkedIn Profile
+        </div>
+        
+        <form
+          onSubmit={(event) => {
+          event.preventDefault();
+          postProfile();
+          }}
         >
-          Post LinkedIn
-        </button>
+          <div>
+            <input
+              type="text"
+              placeholder="URL"
+              value={inputValue}
+              onChange={onInputChange}
+            />
+          </div>
+
+          <button
+            type="submit"
+            className="profileButton"
+          >
+            Add LinkedIn
+          </button>
+        </form>
 
       </div>
     );
