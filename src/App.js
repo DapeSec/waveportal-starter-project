@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { ReactTinyLink } from "react-tiny-link";
 import { ethers } from "ethers";
 import './App.css';
 import abi from './utils/LinkedInPortal.json';
@@ -7,15 +8,44 @@ import twitterLogo from './assets/twitter-logo.svg';
   // Constants
   const TWITTER_HANDLE = 'Dape25';
   const TWITTER_LINK = `https://twitter.com/${TWITTER_HANDLE}`;
-  const contractAddress = "0x99D90ecD32fb32c361CfE43769356e4dA3633B05";
+  const contractAddress = "0xFa63dd3bCf47016FC3ee7c911cBB64EB1cb421c1";
   const contractABI = abi.abi;
 
   const App = () => {
     // States
     const [currentAccount, setCurrentAccount] = useState("");
+    const [allProfiles, setAllProfiles] = useState([]);
     const [inputValue, setInputValue] = useState('');
 
     // Actions
+    const getAllProfiles = async () => {
+      try {
+        const { ethereum } = window;
+        if (ethereum) {
+          const provider = new ethers.providers.Web3Provider(ethereum);
+          const signer = provider.getSigner();
+          const linkedinPortalContract = new ethers.Contract(contractAddress, contractABI, signer);
+  
+          const profiles = await linkedinPortalContract.getAllProfiles();
+
+          let profilesCleaned = [];
+          profiles.forEach(profile => {
+            profilesCleaned.push({
+              address: profile.waver,
+              timestamp: new Date(profile.timestamp * 1000),
+              message: profile.message
+            });
+          });
+  
+          setAllProfiles(profilesCleaned);
+        } else {
+          console.log("Ethereum object doesn't exist!")
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
     const checkIfWalletIsConnected = async () => {    
       try {
         const { ethereum } = window;
@@ -33,6 +63,7 @@ import twitterLogo from './assets/twitter-logo.svg';
           const account = accounts[0];
           console.log("Found an authorized account:", account);
           setCurrentAccount(account)
+          getAllProfiles()
         } else {
           console.log("No authorized account found")
         }
@@ -71,7 +102,7 @@ import twitterLogo from './assets/twitter-logo.svg';
           let count = await linkedinPortalContract.getTotalProfiles();
           console.log("Retrieved total LinkedIn Profiles...", count.toNumber());
 
-          const profileTxn = await linkedinPortalContract.postProfile();
+          const profileTxn = await linkedinPortalContract.postProfile(inputValue);
           console.log("Mining...", profileTxn.hash);
 
           await profileTxn.wait();
@@ -80,7 +111,6 @@ import twitterLogo from './assets/twitter-logo.svg';
           count = await linkedinPortalContract.getTotalProfiles();
           console.log("Retrieved total LinkedIn Profiles...", count.toNumber());
           
-          console.log("Ethereum object doesn't exist!");
         } else {
           console.log("Ethereum object doesn't exist!");
         }
@@ -112,7 +142,7 @@ import twitterLogo from './assets/twitter-logo.svg';
         <form
           onSubmit={(event) => {
           event.preventDefault();
-          postProfile();
+          postProfile(inputValue);
           }}
         >
           <div>
@@ -132,7 +162,22 @@ import twitterLogo from './assets/twitter-logo.svg';
           </button>
           
         </form>
-
+        
+        <div>
+          {allProfiles.map((profile, index) => {
+            return (
+              <div key={index} style={{ backgroundColor: "OldLace", marginTop: "16px", padding: "8px" }}>
+                <ReactTinyLink
+                  cardSize="large"
+                  showGraphic={true}
+                  maxLine={2}
+                  minLine={1}
+                  url={profile.message}
+                />
+              </div>)
+          })}
+        </div>
+        
       </div>
     );
 
@@ -164,7 +209,7 @@ import twitterLogo from './assets/twitter-logo.svg';
             className="footer-text"
             href={TWITTER_LINK}
             target="_blank"
-            rel="noreferrer"
+            rel="noopener noreferrer"
           >{`@${TWITTER_HANDLE}`}</a>
         </div>
 
