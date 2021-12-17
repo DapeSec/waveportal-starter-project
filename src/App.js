@@ -79,6 +79,8 @@ import twitterLogo from './assets/twitter-logo.svg';
 
           count = await linkedinPortalContract.getTotalProfiles();
           console.log("Retrieved total LinkedIn Profiles...", count.toNumber());
+          
+          console.log("Ethereum object doesn't exist!");
         } else {
           console.log("Ethereum object doesn't exist!");
         }
@@ -128,6 +130,7 @@ import twitterLogo from './assets/twitter-logo.svg';
           >
             Add LinkedIn
           </button>
+          
         </form>
 
       </div>
