@@ -1,3 +1,11 @@
+.App {
+  height: 100vh;
+  background-color: rgb(12, 8, 39);
+  overflow: scroll;
+  text-align: center;
+  overflow: hidden;
+}
+
 .mainContainer {
   display: flex;
   justify-content: center;
@@ -13,22 +21,31 @@
 }
 
 .header {
-  text-align: center;
-  font-size: 32px;
-  font-weight: 600;
+  margin: 0;
+  font-size: 50px;
+  font-weight: bold;
+  color: white;
 }
 
-.bio {
+.summary {
   text-align: center;
   color: gray;
   margin-top: 16px;
+  font-size: 20px;
 }
 
-.waveButton {
-  cursor: pointer;
-  margin-top: 16px;
-  padding: 8px;
+.profileButton {
+  height: 45px;
   border: 0;
-  border-radius: 5px;
-  
+  width: auto;
+  padding-left: 40px;
+  padding-right: 40px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  color: white;
+  background: -webkit-linear-gradient(left, rgb(40, 103, 178), #ff52ff);
+  background-size: 200% 200%;
+  animation: gradient-animation 4s ease infinite;
 }

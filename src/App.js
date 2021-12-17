@@ -9,20 +9,24 @@ export default function App() {
   }
   
   return (
-    <div className="mainContainer">
+    <div className="App">
+      <div className="mainContainer">
 
-      <div className="dataContainer">
-        <div className="header">
-        👋 Hey there!
+        <div className="dataContainer">
+
+          <div className="header">
+          Web 3.0 LinkedIn Profiles
+          </div>
+
+          <div className="summary">
+          Add a link to your LinkedIn Profile to be displayed as a Web 3.0 dev!
+          </div>
+
+          <button className="profileButton" onClick={wave}>
+            Post LinkedIn
+          </button>
+          
         </div>
-
-        <div className="bio">
-        I am farza and I worked on self-driving cars so that's pretty cool right? Connect your Ethereum wallet and wave at me!
-        </div>
-
-        <button className="waveButton" onClick={wave}>
-          Wave at Me
-        </button>
       </div>
     </div>
   );
