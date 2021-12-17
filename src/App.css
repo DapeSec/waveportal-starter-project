@@ -49,3 +49,41 @@
   background-size: 200% 200%;
   animation: gradient-animation 4s ease infinite;
 }
+
+.walletButton {
+  height: 45px;
+  border: 0;
+  width: auto;
+  padding-left: 40px;
+  padding-right: 40px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  color: white;
+  background: -webkit-linear-gradient(left, rgb(40, 103, 178), #ff52ff);
+  background-size: 200% 200%;
+  animation: gradient-animation 4s ease infinite;
+}
+
+.footer-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  width: 100%;
+  bottom: 0;
+  left: 0;
+  /* padding-bottom: 45px; */
+}
+
+.twitter-logo {
+  width: 35px;
+  height: 35px;
+}
+
+.footer-text {
+  font-size: 16px;
+  font-weight: bold;
+  color: white;
+}
