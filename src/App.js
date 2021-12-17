@@ -1,10 +1,14 @@
 import React, { useEffect, useState } from "react";
+import { ethers } from "ethers";
 import './App.css';
+import abi from './utils/LinkedInPortal.json';
 import twitterLogo from './assets/twitter-logo.svg';
 
   // Constants
   const TWITTER_HANDLE = 'Dape25';
   const TWITTER_LINK = `https://twitter.com/${TWITTER_HANDLE}`;
+  const contractAddress = "0xd5f08a0ae197482FA808cE84E00E97d940dBD26E";
+  const contractABI = abi.abi;
 
   const App = () => {
     // States
@@ -54,6 +58,34 @@ import twitterLogo from './assets/twitter-logo.svg';
       }
     }
 
+    const postProfile = async () => {
+      try {
+        const { ethereum } = window;
+  
+        if (ethereum) {
+          const provider = new ethers.providers.Web3Provider(ethereum);
+          const signer = provider.getSigner();
+          const linkedinPortalContract = new ethers.Contract(contractAddress, contractABI, signer);
+  
+          let count = await linkedinPortalContract.getTotalProfiles();
+          console.log("Retrieved total LinkedIn Profiles...", count.toNumber());
+
+          const profileTxn = await linkedinPortalContract.wave();
+          console.log("Mining...", profileTxn.hash);
+
+          await profileTxn.wait();
+          console.log("Mined -- ", profileTxn.hash);
+
+          count = await linkedinPortalContract.getTotalProfiles();
+          console.log("Retrieved total LinkedIn Profiles...", count.toNumber());
+        } else {
+          console.log("Ethereum object doesn't exist!");
+        }
+      } catch (error) {
+        console.log(error)
+      }
+    }
+
     const renderNotConnectedContainer = () => (
       <button
         className="walletButton"
@@ -83,10 +115,6 @@ import twitterLogo from './assets/twitter-logo.svg';
       checkIfWalletIsConnected();
     }, [])
   
-  const postProfile = () => {
-    console.log("Nice try")
-  }
-  
   return (
     <div className="App">
       <div className="mainContainer">
@@ -112,7 +140,7 @@ import twitterLogo from './assets/twitter-logo.svg';
             rel="noreferrer"
           >{`@${TWITTER_HANDLE}`}</a>
         </div>
-        
+
       </div>
     </div>
   );
