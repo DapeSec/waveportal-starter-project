@@ -67,7 +67,6 @@ import twitterLogo from './assets/twitter-logo.svg';
           const account = accounts[0];
           console.log("Found an authorized account:", account);
           setCurrentAccount(account)
-          getAllProfiles()
         } else {
           console.log("No authorized account found")
         }
@@ -88,7 +87,10 @@ import twitterLogo from './assets/twitter-logo.svg';
         const accounts = await ethereum.request({ method: "eth_requestAccounts" });
   
         console.log("Connected", accounts[0]);
-        setCurrentAccount(accounts[0]); 
+        setCurrentAccount(accounts[0]);
+        setIsLoadingProfiles(true)
+        getAllProfiles()
+        setIsLoadingProfiles(false) 
       } catch (error) {
         console.log(error)
       }
@@ -101,7 +103,6 @@ import twitterLogo from './assets/twitter-logo.svg';
         if (ethereum) {
           setIsPostingProfiles(true)
           
-
           const provider = new ethers.providers.Web3Provider(ethereum);
           const signer = provider.getSigner();
           const linkedinPortalContract = new ethers.Contract(contractAddress, contractABI, signer);
@@ -244,15 +245,10 @@ import twitterLogo from './assets/twitter-logo.svg';
     );
 
     const renderConnectedContainer = () => (
-      <div className="connected-container">
-
-
-        
+      <div className="connected-container">     
         {!isPostingProfiles && renderIsNotPostingProfilesContainer()}
-
         {isLoadingProfiles && renderIsLoadingProfilesContainer()}
         {!isLoadingProfiles && renderIsNotLoadingProfilesContainer()}       
-
       </div>
     );
 
