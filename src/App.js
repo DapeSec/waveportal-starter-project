@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { ReactTinyLink } from "react-tiny-link";
 import { ethers } from "ethers";
 import './App.css';
 import abi from './utils/LinkedInPortal.json';
@@ -8,14 +7,18 @@ import twitterLogo from './assets/twitter-logo.svg';
   // Constants
   const TWITTER_HANDLE = 'Dape25';
   const TWITTER_LINK = `https://twitter.com/${TWITTER_HANDLE}`;
-  const contractAddress = "0xFa63dd3bCf47016FC3ee7c911cBB64EB1cb421c1";
+  const contractAddress = "0xC97bb028f4bB1C4Bb2807CbC21E704DaF07387cf";
   const contractABI = abi.abi;
 
   const App = () => {
     // States
     const [currentAccount, setCurrentAccount] = useState("");
     const [allProfiles, setAllProfiles] = useState([]);
-    const [inputValue, setInputValue] = useState('');
+    const [nameValue, setNameValue] = useState('');
+    const [urlValue, setUrlValue] = useState('');
+    const [isPostingProfiles, setIsPostingProfiles] = useState(false);
+    const [isLoadingProfiles, setIsLoadingProfiles] = useState(false);
+    
 
     // Actions
     const getAllProfiles = async () => {
@@ -33,7 +36,8 @@ import twitterLogo from './assets/twitter-logo.svg';
             profilesCleaned.push({
               address: profile.waver,
               timestamp: new Date(profile.timestamp * 1000),
-              message: profile.message
+              name: profile.name,
+              url: profile.url
             });
           });
   
@@ -95,6 +99,9 @@ import twitterLogo from './assets/twitter-logo.svg';
         const { ethereum } = window;
   
         if (ethereum) {
+          setIsPostingProfiles(true)
+          
+
           const provider = new ethers.providers.Web3Provider(ethereum);
           const signer = provider.getSigner();
           const linkedinPortalContract = new ethers.Contract(contractAddress, contractABI, signer);
@@ -102,26 +109,43 @@ import twitterLogo from './assets/twitter-logo.svg';
           let count = await linkedinPortalContract.getTotalProfiles();
           console.log("Retrieved total LinkedIn Profiles...", count.toNumber());
 
-          const profileTxn = await linkedinPortalContract.postProfile(inputValue);
+          const profileTxn = await linkedinPortalContract.postProfile(nameValue, urlValue);
           console.log("Mining...", profileTxn.hash);
+
+          setNameValue("")
+          setUrlValue("")
 
           await profileTxn.wait();
           console.log("Mined -- ", profileTxn.hash);
 
+          setIsPostingProfiles(false)
+          setIsLoadingProfiles(true)
+
           count = await linkedinPortalContract.getTotalProfiles();
           console.log("Retrieved total LinkedIn Profiles...", count.toNumber());
+
+          await getAllProfiles()
+          setIsLoadingProfiles(false)
           
+
         } else {
           console.log("Ethereum object doesn't exist!");
         }
       } catch (error) {
         console.log(error)
+        setIsPostingProfiles(false)
+        setIsLoadingProfiles(false)
       }
     }
 
-    const onInputChange = (event) => {
+    const onNameChange = (event) => {
       const { value } = event.target;
-      setInputValue(value);
+      setNameValue(value);
+    };
+
+    const onUrlChange = (event) => {
+      const { value } = event.target;
+      setUrlValue(value);
     };
 
     const renderNotConnectedContainer = () => (
@@ -133,26 +157,36 @@ import twitterLogo from './assets/twitter-logo.svg';
       </button>
     );
 
-    const renderConnectedContainer = () => (
+    const renderIsNotPostingProfilesContainer = () => (
       <div className="connected-container">
         <div className="summary">
-          Add a link to your LinkedIn Profile
+          Link your profile to the Metaverse
         </div>
         
         <form
           onSubmit={(event) => {
           event.preventDefault();
-          postProfile(inputValue);
+          postProfile(nameValue, urlValue);
           }}
         >
-          <div>
+
+        <div>
+
+          <input
+              type="text"
+              placeholder="Name"
+              value={nameValue}
+              onChange={onNameChange}
+            />
+
             <input
               type="text"
               placeholder="URL"
-              value={inputValue}
-              onChange={onInputChange}
+              value={urlValue}
+              onChange={onUrlChange}
             />
-          </div>
+
+        </div>
 
           <button
             type="submit"
@@ -160,24 +194,65 @@ import twitterLogo from './assets/twitter-logo.svg';
           >
             Add LinkedIn
           </button>
-          
+            
         </form>
+
         
-        <div>
-          {allProfiles.map((profile, index) => {
-            return (
-              <div key={index} style={{ backgroundColor: "OldLace", marginTop: "16px", padding: "8px" }}>
-                <ReactTinyLink
-                  cardSize="large"
-                  showGraphic={true}
-                  maxLine={2}
-                  minLine={1}
-                  url={profile.message}
-                />
-              </div>)
-          })}
+
+      </div>
+    );
+
+    const renderIsLoadingProfilesContainer = () => (
+      <div className="connected-container">
+        <div className="summary">
+          Syncing with the Metaverse, please wait...
         </div>
+      </div>
+    );
+
+    const renderIsNotLoadingProfilesContainer = () => (
+      <div className="connected-container">
+        <br></br>
+
+        <div className="profiles-header">
+          MetaLinked Profiles
+        </div>
+
+        <br></br>
+
+        <div className="profile-grid">
+
+          {allProfiles.map((profile, index) => (
+
+            <div className="profile-item" key={index}>
+              <form action={profile.url}>
+                <button 
+                  className="profiles"
+                  type="submit"
+                >
+                  {profile.name}
+                </button>
+              </form>
+
+            </div>
+
+          ))}
+
+        </div>
+
+      </div>
+    );
+
+    const renderConnectedContainer = () => (
+      <div className="connected-container">
+
+
         
+        {!isPostingProfiles && renderIsNotPostingProfilesContainer()}
+
+        {isLoadingProfiles && renderIsLoadingProfilesContainer()}
+        {!isLoadingProfiles && renderIsNotLoadingProfilesContainer()}       
+
       </div>
     );
 
@@ -195,7 +270,7 @@ import twitterLogo from './assets/twitter-logo.svg';
 
           <div className="header">
           Web 3.0 LinkedIn
-          </div>       
+          </div>
 
           {!currentAccount && renderNotConnectedContainer()}
 
