@@ -7,7 +7,7 @@ import twitterLogo from './assets/twitter-logo.svg';
   // Constants
   const TWITTER_HANDLE = 'Dape25';
   const TWITTER_LINK = `https://twitter.com/${TWITTER_HANDLE}`;
-  const contractAddress = "0x586b0b0462F7d779796BE0371BCf00C99F86e8dc";
+  const contractAddress = "0x964CF3EEe40A2836C06F069Edd834eb9b5C808Ba";
   const contractABI = abi.abi;
 
   const App = () => {
@@ -113,7 +113,7 @@ import twitterLogo from './assets/twitter-logo.svg';
           let count = await linkedinPortalContract.getTotalProfiles();
           console.log("Retrieved total LinkedIn Profiles...", count.toNumber());
 
-          const profileTxn = await linkedinPortalContract.postProfile(nameValue, urlValue);
+          const profileTxn = await linkedinPortalContract.postProfile(nameValue, urlValue, { gasLimit: 300000 });
           console.log("Mining...", profileTxn.hash);
 
           setNameValue("")
