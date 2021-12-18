@@ -67,6 +67,9 @@ import twitterLogo from './assets/twitter-logo.svg';
           const account = accounts[0];
           console.log("Found an authorized account:", account);
           setCurrentAccount(account)
+          setIsPostingProfiles(true)
+          getAllProfiles()
+          setIsPostingProfiles(false)
         } else {
           console.log("No authorized account found")
         }
@@ -88,9 +91,9 @@ import twitterLogo from './assets/twitter-logo.svg';
   
         console.log("Connected", accounts[0]);
         setCurrentAccount(accounts[0]);
-        setIsLoadingProfiles(true)
+        setIsPostingProfiles(true)
         getAllProfiles()
-        setIsLoadingProfiles(false) 
+        setIsPostingProfiles(false) 
       } catch (error) {
         console.log(error)
       }
