@@ -34,7 +34,7 @@ import twitterLogo from './assets/twitter-logo.svg';
           let profilesCleaned = [];
           profiles.forEach(profile => {
             profilesCleaned.push({
-              address: profile.waver,
+              address: profile.poster,
               timestamp: new Date(profile.timestamp * 1000),
               name: profile.name,
               url: profile.url
@@ -67,9 +67,9 @@ import twitterLogo from './assets/twitter-logo.svg';
           const account = accounts[0];
           console.log("Found an authorized account:", account);
           setCurrentAccount(account)
-          setIsPostingProfiles(true)
+          setIsLoadingProfiles(true)
           getAllProfiles()
-          setIsPostingProfiles(false)
+          setIsLoadingProfiles(false)
         } else {
           console.log("No authorized account found")
         }
@@ -91,9 +91,9 @@ import twitterLogo from './assets/twitter-logo.svg';
   
         console.log("Connected", accounts[0]);
         setCurrentAccount(accounts[0]);
-        setIsPostingProfiles(true)
-        getAllProfiles()
-        setIsPostingProfiles(false) 
+        setIsLoadingProfiles(true)
+           getAllProfiles()
+        setIsLoadingProfiles(false) 
       } catch (error) {
         console.log(error)
       }
@@ -206,10 +206,18 @@ import twitterLogo from './assets/twitter-logo.svg';
       </div>
     );
 
-    const renderIsLoadingProfilesContainer = () => (
+    const renderIsPostingProfilesContainer = () => (
       <div className="connected-container">
         <div className="summary">
           Syncing with the Metaverse, please wait...
+        </div>
+      </div>
+    );
+
+    const renderIsLoadingProfilesContainer = () => (
+      <div className="connected-container">
+        <div className="summary">
+          Loading Meatlinked profiles...
         </div>
       </div>
     );
@@ -250,6 +258,7 @@ import twitterLogo from './assets/twitter-logo.svg';
     const renderConnectedContainer = () => (
       <div className="connected-container">     
         {!isPostingProfiles && renderIsNotPostingProfilesContainer()}
+        {isPostingProfiles && renderIsPostingProfilesContainer()}
         {isLoadingProfiles && renderIsLoadingProfilesContainer()}
         {!isLoadingProfiles && renderIsNotLoadingProfilesContainer()}       
       </div>
