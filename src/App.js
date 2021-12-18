@@ -280,6 +280,8 @@ import twitterLogo from './assets/twitter-logo.svg';
           Web 3.0 LinkedIn
           </div>
 
+          <br></br>
+
           {!currentAccount && renderNotConnectedContainer()}
 
           {currentAccount && renderConnectedContainer()}
